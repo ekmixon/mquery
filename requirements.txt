@@ -22,7 +22,7 @@ urllib3==1.24.2
 uvicorn==0.11.3
 uvloop==0.14.0
 uWSGI==2.0.17.1
-websockets==8.1
+websockets==10.0
 Werkzeug==0.15.3
 yara-python==3.8.1
 yaramod==3.8.0
