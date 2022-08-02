@@ -37,8 +37,8 @@ def process_job(
 ) -> None:
     offset = 0
 
+    MAX_SAMPLES = 50
     while True:
-        MAX_SAMPLES = 50
         out = requests.get(
             f"{mquery_server}/api/matches/{job_id}",
             {"offset": offset, "limit": MAX_SAMPLES},
@@ -78,8 +78,8 @@ def process_job(
 
             offset += 1
 
-        FINISHED_STATES = ["cancelled", "failed", "done", "removed"]
         if not matches:
+            FINISHED_STATES = ["cancelled", "failed", "done", "removed"]
             if out["job"]["status"] in FINISHED_STATES:
                 break
 

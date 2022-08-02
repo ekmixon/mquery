@@ -90,9 +90,7 @@ class YaraRuleData:
 
         parser = RuleParseEngine(strings, self.context)
         result = parser.traverse(self.rule.condition)
-        if result is not None:
-            return result
-        return UrsaExpression("{}")
+        return result if result is not None else UrsaExpression("{}")
 
     def parse(self) -> UrsaExpression:
         if self.__parsed is None:
@@ -113,8 +111,7 @@ class YaraRuleData:
 
     @property
     def author(self) -> str:
-        author_meta = self.rule.get_meta_with_name("author")
-        if author_meta:
+        if author_meta := self.rule.get_meta_with_name("author"):
             return author_meta.value.pure_text
         else:
             return ""
@@ -171,9 +168,7 @@ def flatten_regex_or_tree(unit: Any) -> Optional[List[bytes]]:
     elif type(unit) is RegexpOr:
         left = flatten_regex_or_tree(unit.left)
         right = flatten_regex_or_tree(unit.right)
-        if not left or not right:
-            return None
-        return left + right
+        return None if not left or not right else left + right
     elif type(unit) is RegexpConcat:
         chars = [flatten_regex_or_tree(u) for u in unit.units]
         string = b""
@@ -225,10 +220,7 @@ def urisfy_regex(
             )
             joined_string = b""
 
-    if strings:
-        return UrsaExpression.and_(*strings)
-    else:
-        return None
+    return UrsaExpression.and_(*strings) if strings else None
 
 
 def ursify_regex_string(string: Regexp) -> Optional[UrsaExpression]:
@@ -244,7 +236,7 @@ def ursify_regex_string(string: Regexp) -> Optional[UrsaExpression]:
 
     if string.is_wide and not string.is_ascii:
         return regex_wide
-    elif string.is_wide and string.is_ascii:
+    elif string.is_wide:
         return UrsaExpression.or_(regex_ascii, regex_wide)
     else:
         return regex_ascii
@@ -268,7 +260,7 @@ def ursify_plain_string(
 
     if is_wide and not is_ascii:
         return ursa_wide
-    elif is_wide and is_ascii:
+    elif is_wide:
         return UrsaExpression.or_(ursa_ascii, ursa_wide)
     else:
         return ursa_ascii
@@ -332,10 +324,7 @@ class RuleParseEngine:
         left = self.traverse(condition.left_operand)
         right = self.traverse(condition.right_operand)
 
-        if left and right:
-            return UrsaExpression.or_(left, right)
-        else:
-            return None
+        return UrsaExpression.or_(left, right) if left and right else None
 
     def pare_expr(
         self, condition: ParenthesesExpression
@@ -417,7 +406,7 @@ class RuleParseEngine:
     def str_count_expr(
         self, condition: StringCountExpression
     ) -> Optional[UrsaExpression]:
-        fixed_id = "$" + condition.id[1:]
+        fixed_id = f"${condition.id[1:]}"
         return ursify_string(self.strings[fixed_id])
 
     def int_lit_expr(
@@ -457,9 +446,8 @@ class RuleParseEngine:
     def traverse(self, condition) -> Optional[UrsaExpression]:
         if type(condition) in self.CONDITION_HANDLERS:
             return self.CONDITION_HANDLERS[type(condition)](self, condition)
-        else:
-            print(f"unsupported expression: {type(condition)}")
-            return None
+        print(f"unsupported expression: {type(condition)}")
+        return None
 
 
 def parse_yara(yara_rule: str) -> List[YaraRuleData]:

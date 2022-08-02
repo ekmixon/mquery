@@ -116,7 +116,7 @@ def query(
         )
 
     if not rules:
-        raise HTTPException(status_code=400, detail=f"No rule was specified.")
+        raise HTTPException(status_code=400, detail="No rule was specified.")
 
     if data.method == RequestQueryMethod.parse:
         return [
@@ -133,10 +133,9 @@ def query(
     active_agents = db.get_active_agents()
 
     for agent, agent_spec in active_agents.items():
-        missing = set(data.required_plugins).difference(
+        if missing := set(data.required_plugins).difference(
             agent_spec.active_plugins
-        )
-        if missing:
+        ):
             raise HTTPException(
                 status_code=409,
                 detail=f"Agent {agent} doesn't support "
@@ -243,7 +242,7 @@ def compact_files() -> StatusSchema:
 
     This endpoint is not stable and may be subject to change in the future.
     """
-    db.broadcast_command(f"compact all;")
+    db.broadcast_command("compact all;")
     return StatusSchema(status="ok")
 
 
@@ -310,7 +309,7 @@ def backend_status_datasets() -> BackendStatusDatasetsSchema:
     for agent_spec in db.get_active_agents().values():
         try:
             ursa = UrsaDb(agent_spec.ursadb_url)
-            datasets.update(ursa.topology()["result"]["datasets"])
+            datasets |= ursa.topology()["result"]["datasets"]
         except Again:
             pass
 

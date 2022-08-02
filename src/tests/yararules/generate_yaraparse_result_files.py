@@ -4,7 +4,7 @@ from lib.yaraparse import parse_yara
 from lib.yaraparse import combine_rules
 
 current_path = os.path.abspath(os.path.dirname(__file__))
-testdir = current_path + "/testdata/"
+testdir = f"{current_path}/testdata/"
 
 
 def main() -> None:

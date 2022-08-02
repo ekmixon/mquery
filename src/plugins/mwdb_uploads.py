@@ -30,9 +30,7 @@ class MalwarecageUploadsMetadata(MetadataPlugin):
             r"/([a-f0-9])/([a-f0-9])/([a-f0-9])/([a-f0-9])/(\1\2\3\4[a-f0-9]+)$",
             matched_fname,
         )
-        if not m:
-            return None
-        return m.group(5)
+        return m[5] if m else None
 
     def extract(
         self, identifier: str, matched_fname: str, current_meta: Metadata
@@ -40,9 +38,7 @@ class MalwarecageUploadsMetadata(MetadataPlugin):
         # '/uploads' Malwarecage directory format
         # /mnt/samples/9/d/c/5/9dc571ae13a62954155999cae9cecc4f0689e2ba9a8940f81d1e564271507a3e
         metadata = {}
-        sample = self.mwdb.query(identifier, raise_not_found=False)
-
-        if sample:
+        if sample := self.mwdb.query(identifier, raise_not_found=False):
             for tag in sample.tags:
                 query = urllib.parse.urlencode({"q": f'tag:"{tag}"'})
                 # Add queryable metadata for each tag from Malwarecage
@@ -52,10 +48,11 @@ class MalwarecageUploadsMetadata(MetadataPlugin):
                 }
 
             # Add metadata with link to sample in Malwarecage instance
-            metadata[f"mwdb_analysis"] = {
+            metadata["mwdb_analysis"] = {
                 "display_text": "mwdb",
                 "url": f"{self.mwdb_url}sample/{identifier}",
             }
+
 
             job_id = current_meta["job"]
             # Add metakey with job identifier

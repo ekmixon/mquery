@@ -23,9 +23,7 @@ class PopResult:
     @property
     def iterator_empty(self) -> bool:
         """ Is it safe to remove the iterator after this operation? """
-        if self.was_locked:
-            return False
-        return self.iterator_pos >= self.total_files
+        return False if self.was_locked else self.iterator_pos >= self.total_files
 
 
 class UrsaDb:

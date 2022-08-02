@@ -2,13 +2,14 @@
 Yara rule test corpus
 """
 
+
 import unittest
 import os
 from lib.yaraparse import combine_rules
 from lib.yaraparse import parse_yara
 
 current_path = os.path.abspath(os.path.dirname(__file__))
-testdir = current_path + "/testdata/"
+testdir = f"{current_path}/testdata/"
 
 
 class TestYaraRules(unittest.TestCase):
@@ -20,7 +21,7 @@ class TestYaraRules(unittest.TestCase):
             with open(testdir + file) as f:
                 data = f.read()
 
-            expected_file_txt = file + ".txt"
+            expected_file_txt = f"{file}.txt"
             self.assert_query(data, expected_file_txt)
 
     def assert_query(self, data, expected_file_txt):

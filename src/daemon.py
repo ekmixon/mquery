@@ -205,15 +205,13 @@ class Agent:
                 continue
             new_filemap = {}
             for orig_name, current_path in filemap.items():
-                new_path = plugin.filter(orig_name, current_path)
-                if new_path:
+                if new_path := plugin.filter(orig_name, current_path):
                     new_filemap[orig_name] = new_path
             filemap = new_filemap
 
         for orig_name, path in filemap.items():
             try:
-                matches = rule.match(path)
-                if matches:
+                if matches := rule.match(path):
                     self.__update_metadata(
                         job, orig_name, path, [r.rule for r in matches]
                     )
@@ -359,11 +357,7 @@ def main() -> None:
     group_id (it's `default` by default)
     """
     setup_logging()
-    if len(sys.argv) > 1:
-        agent_group_id = sys.argv[1]
-    else:
-        agent_group_id = "default"
-
+    agent_group_id = sys.argv[1] if len(sys.argv) > 1 else "default"
     logging.info("Agent [%s] running...", agent_group_id)
 
     db = Database(config.REDIS_HOST, config.REDIS_PORT)

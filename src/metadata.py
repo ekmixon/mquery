@@ -37,11 +37,9 @@ class MetadataPlugin(ABC):
         return f"{self.get_name()}:{cache_tag}"
 
     def _cache_fetch(self, cache_tag: str) -> Metadata:
-        obj = self.db.cache_get(
+        if obj := self.db.cache_get(
             self.__cache_key(cache_tag), expire=self.cache_expire_time
-        )
-
-        if obj:
+        ):
             return json.loads(obj)
         return {}
 
@@ -74,8 +72,7 @@ class MetadataPlugin(ABC):
             return {}
         # If plugin allows to cache data: try to fetch from cache
         if self.cacheable:
-            cached = self._cache_fetch(identifier)
-            if cached:
+            if cached := self._cache_fetch(identifier):
                 return cached
         # Extract data
         result = self.extract(identifier, matched_fname, current_meta)

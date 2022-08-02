@@ -34,8 +34,7 @@ def walk_directory(dir: Path, ignores: List[str]) -> Iterator[Path]:
         elif elem.is_file():
             yield elem
         elif elem.is_dir():
-            for elem in walk_directory(elem, ignores):
-                yield elem
+            yield from walk_directory(elem, ignores)
 
 
 def find_new_files(
@@ -166,21 +165,20 @@ def index(
     logging.info("Index.1: Compact threshold = %s.", compact_threshold)
 
     logging.info("Index.2: Find prepared batches.")
-    indexing_jobs = []
-    for batch in workdir.glob("*.txt"):
-        indexing_jobs.append((ursadb, types, tags, batch, compact_threshold))
+    indexing_jobs = [
+        (ursadb, types, tags, batch, compact_threshold)
+        for batch in workdir.glob("*.txt")
+    ]
 
     logging.info("Index.2: Got %s batches to run.", len(indexing_jobs))
 
     logging.info("Index.3: Run index commands with %s workers.", workers)
     pool = Pool(processes=workers)
-    done = 0
     total = len(indexing_jobs)
-    for batchid in pool.imap_unordered(
+    for done, batchid in enumerate(pool.imap_unordered(
         index_files, indexing_jobs, chunksize=1
-    ):
-        done += 1
-        logging.info(f"Index.4: Batch %s done [%s/%s].", batchid, done, total)
+    ), start=1):
+        logging.info("Index.4: Batch %s done [%s/%s].", batchid, done, total)
 
     if list(workdir.iterdir()):
         logging.info("Index.5: Workdir not removed, because it's not empty.")
@@ -274,17 +272,13 @@ def main() -> None:
     except Exception:
         logging.error("Can't connect to ursadb instance at %s", args.ursadb)
 
-    if args.mode == "prepare" or args.mode == "prepare-and-index":
+    if args.mode in ["prepare", "prepare-and-index"]:
         # Path must exist
         if args.path is None:
             logging.error("Path (--path) is a required parameter.")
             return
 
-        if args.path_mount is not None:
-            path_mount = args.path_mount
-        else:
-            path_mount = args.path
-
+        path_mount = args.path_mount if args.path_mount is not None else args.path
         path = Path(args.path)
         if not path.exists:
             logging.error("Path (--path) %s does not exist.", args.path)
@@ -312,7 +306,7 @@ def main() -> None:
             path_mount,
         )
 
-    if args.mode == "index" or args.mode == "prepare-and-index":
+    if args.mode in ["index", "prepare-and-index"]:
         # By default use only all index types.
         if not args.types:
             types = ["gram3", "text4", "wide8", "hash4"]

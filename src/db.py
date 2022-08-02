@@ -226,11 +226,8 @@ class Database:
     def get_job_matches(
         self, job: JobId, offset: int = 0, limit: Optional[int] = None
     ) -> MatchesSchema:
-        if limit is None:
-            end = -1
-        else:
-            end = offset + limit - 1
-        meta = self.redis.lrange("meta:" + job.hash, offset, end)
+        end = -1 if limit is None else offset + limit - 1
+        meta = self.redis.lrange(f"meta:{job.hash}", offset, end)
         matches = [json.loads(m) for m in meta]
         for match in matches:
             # Compatibility fix for old jobs, without sha256 metadata key.

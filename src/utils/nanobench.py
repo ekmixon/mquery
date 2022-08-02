@@ -18,7 +18,7 @@ def benchmark(socket, query):
     total_ms = 0
     TRY_COUNT = 1
     expected_resp = None
-    for i in range(TRY_COUNT):
+    for _ in range(TRY_COUNT):
         start = datetime.now()
         socket.send_string(query)
         raw_resp = socket.recv()

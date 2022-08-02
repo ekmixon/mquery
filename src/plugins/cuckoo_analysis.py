@@ -18,25 +18,22 @@ class CuckooAnalysisMetadata(MetadataPlugin):
 
     def identify(self, matched_fname: str) -> Optional[str]:
         m = re.search(r"analyses/([0-9]+)/", matched_fname)
-        if not m:
-            return None
-        return m.group(1)
+        return m[1] if m else None
 
     def extract(
         self, identifier: str, matched_fname: str, current_meta: Metadata
     ) -> Metadata:
         try:
-            target = os.readlink(self.path + "{}/binary".format(identifier))
+            target = os.readlink(self.path + f"{identifier}/binary")
         except OSError:
             return {}
 
         binary_hash = target.split("/")[-1]
 
-        obj = {
+        return {
             "cuckoo_hash": {"value": binary_hash},
             "cuckoo_analysis": {
-                "display_text": "cuckoo:{}".format(identifier),
+                "display_text": f"cuckoo:{identifier}",
                 "value": identifier,
             },
         }
-        return obj

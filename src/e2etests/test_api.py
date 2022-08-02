@@ -183,15 +183,14 @@ def test_query_with_taints(add_files_to_index):
 def add_files_to_index(check_operational):
     num_files = 100
     word_length = 10
-    words_list = []
-
-    for i in range(1, num_files):
-        words_list.append(
-            "".join(
-                random.choice(string.ascii_uppercase + string.digits)
-                for _ in range(word_length)
-            )
+    words_list = [
+        "".join(
+            random.choice(string.ascii_uppercase + string.digits)
+            for _ in range(word_length)
         )
+        for _ in range(1, num_files)
+    ]
+
 
     random.shuffle(words_list)
     files_to_detect = words_list[:10]
@@ -259,12 +258,11 @@ def request_query(log, i, taints=[]):
 
     query_hash = res.json()["query_hash"]
 
-    for j in range(15):
+    for _ in range(15):
         res = requests.get(
-            "http://web:5000/api/matches/{}?offset=0&limit=50".format(
-                query_hash
-            )
+            f"http://web:5000/api/matches/{query_hash}?offset=0&limit=50"
         )
+
         log.info("API response: %s", res.json())
         if res.json()["job"]["status"] == "done":
             break

@@ -20,6 +20,4 @@ class RegexBlacklistPlugin(MetadataPlugin):
         self.blacklist_pattern = config["blacklist_pattern"]
 
     def filter(self, orig_name: str, file_path: str) -> Optional[str]:
-        if re.search(self.blacklist_pattern, orig_name):
-            return None
-        return file_path
+        return None if re.search(self.blacklist_pattern, orig_name) else file_path

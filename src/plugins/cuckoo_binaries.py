@@ -10,9 +10,7 @@ class CuckooBinariesMetadata(MetadataPlugin):
 
     def identify(self, matched_fname: str) -> Optional[str]:
         m = re.search(r"/binaries/([a-f0-9]+)$", matched_fname)
-        if not m:
-            return None
-        return m.group(1)
+        return m[1] if m else None
 
     def extract(
         self, identifier: str, matched_fname: str, current_meta: Metadata
