@@ -10,7 +10,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.0
 ply==3.11
-pydantic==1.7.3
+pydantic==1.7.4
 pyparsing==2.3.1
 pyzmq==17.1.2
 redis==3.0.1
@@ -22,7 +22,7 @@ urllib3==1.24.2
 uvicorn==0.11.3
 uvloop==0.14.0
 uWSGI==2.0.17.1
-websockets==8.1
+websockets==10.0
 Werkzeug==0.15.3
 yara-python==3.8.1
 yaramod==3.8.0
