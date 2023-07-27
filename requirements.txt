@@ -1,5 +1,5 @@
 aiofiles==0.4.0
-certifi==2018.11.29
+certifi==2023.7.22
 chardet==3.0.4
 Click==7.0
 fastapi==0.54.0
