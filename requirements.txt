@@ -10,7 +10,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.0
 ply==3.11
-pydantic==1.7.3
+pydantic==2.4.0
 pyparsing==2.3.1
 pyzmq==17.1.2
 redis==3.0.1
