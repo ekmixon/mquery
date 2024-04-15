@@ -5,7 +5,7 @@ COPY src/mqueryfront /app
 WORKDIR /app
 RUN npm install && npm run build
 
-FROM python:3.7
+FROM python:3.13.0a6
 
 WORKDIR /usr/src/app/src
 
