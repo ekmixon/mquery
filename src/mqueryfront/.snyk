@@ -1,0 +1,18 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - react-scripts > eslint > lodash:
+        patched: '2025-04-24T16:56:42.768Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-scripts > eslint > lodash
+    - react-scripts > eslint > inquirer > lodash:
+        patched: '2025-04-24T16:56:42.768Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-scripts > eslint > inquirer > lodash
+    - react-scripts > eslint > table > lodash:
+        patched: '2025-04-24T16:56:42.768Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-scripts > eslint > table > lodash
